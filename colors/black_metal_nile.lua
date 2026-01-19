@@ -6,26 +6,26 @@ local M = {}
 -- ONLY the 16 colors from your Ghostty palette
 local colors = {
     -- palette 0-7
-    black = '#000000',      -- 0
-    cyan = '#5f8787',       -- 1
-    sand = '#aa9988',       -- 2
-    olive = '#777755',      -- 3
-    gray1 = '#888888',      -- 4
-    gray2 = '#999999',      -- 5
-    gray3 = '#aaaaaa',      -- 6
-    white = '#c1c1c1',      -- 7
+    black = '#000000',        -- 0
+    cyan = '#5f8787',         -- 1
+    sand = '#aa9988',         -- 2
+    olive = '#777755',        -- 3
+    gray1 = '#888888',        -- 4
+    gray2 = '#999999',        -- 5
+    gray3 = '#aaaaaa',        -- 6
+    white = '#a8a8a8',        -- 7 (darkened from #c1c1c1)
     -- palette 8-15 (bright variants)
     bright_black = '#3f3f3f', -- 8
-    bright_cyan = '#5f8787', -- 9
-    bright_sand = '#aa9988', -- 10
+    bright_cyan = '#5f8787',  -- 9
+    bright_sand = '#aa9988',  -- 10
     bright_olive = '#777755', -- 11
     bright_gray1 = '#888888', -- 12
     bright_gray2 = '#999999', -- 13
     bright_gray3 = '#aaaaaa', -- 14
-    bright_white = '#c1c1c1', -- 15
+    bright_white = '#a8a8a8', -- 15 (darkened from #c1c1c1)
     -- bg/fg from config
     bg = '#000000',
-    fg = '#c1c1c1',
+    fg = '#a8a8a8', -- darkened from #c1c1c1
 }
 
 local function hi(group, opts)
