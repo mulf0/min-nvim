@@ -358,6 +358,80 @@ require('lazy').setup({
         lazy = false,   -- This plugin is already lazy
     },
 
+    -- Lean theorem prover support
+    {
+        'Julian/lean.nvim',
+        event = { 'BufReadPre *.lean', 'BufNewFile *.lean' },
+
+        dependencies = {
+            'nvim-lua/plenary.nvim',
+            -- telescope.nvim already in config (for Loogle picker)
+            -- blink.cmp already in config (for completion)
+        },
+
+        ---@type lean.Config
+        opts = {
+            -- Enable suggested mappings (see README for full list)
+            mappings = true,
+
+            -- LSP config: Use vim.lsp.config('leanls', {...}) for customization
+            -- Defaults (editDelay=10, hasWidgets=true) are in lsp/leanls.lua
+
+            -- Filetype settings
+            ft = {
+                -- Patterns to mark as nomodifiable (prevents editing stdlib)
+                -- Default: Lean stdlib and _target directories
+                -- Set to {} to disable protection
+                nomodifiable = nil,
+            },
+
+            -- Unicode abbreviation expansion
+            abbreviations = {
+                enable = true,
+                -- Add custom abbreviations: { wknight = '♘' }
+                extra = {},
+                -- Trigger character (backslash by default)
+                leader = '\\',
+            },
+
+            -- Infoview window configuration
+            infoview = {
+                -- Auto-open on entering Lean buffer (true/false/function)
+                autoopen = false,
+                -- Window dimensions (<1 = percentage of buffer)
+                width = 1/3,
+                height = 1/3,
+                -- Layout: "auto" | "vertical" | "horizontal"
+                orientation = "auto",
+                -- When horizontal: "top" | "bottom"
+                horizontal_position = "bottom",
+                -- Open in separate tab (useful for screen readers)
+                separate_tab = false,
+                -- Show pin indicators: "always" | "never" | "auto"
+                indicators = "auto",
+            },
+
+            -- Progress indicators in sign column
+            progress_bars = {
+                -- Enable progress bars (auto-disabled if satellite.nvim present)
+                enable = true,
+                -- Character for progress indicator
+                character = '│',
+                -- Sign priority
+                priority = 10,
+            },
+
+            -- Stderr message handling
+            stderr = {
+                enable = true,
+                -- Window height for stderr buffer
+                height = 5,
+                -- Custom handler: function(lines) vim.notify(lines) end
+                on_lines = nil,
+            },
+        },
+    },
+
 }, {
     ui = {
         border = 'single',
