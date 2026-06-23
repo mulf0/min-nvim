@@ -1,3 +1,25 @@
+[i] Using default configuration
+[i] Token count: 5,526, Model info: ChatGPT models, text-embedding-ada-002
+Project Path: nvim
+
+Source Tree:
+
+```txt
+nvim
+├── init.lua
+├── lazy-lock.json
+├── lsp
+│   ├── clangd.lua
+│   ├── lua_ls.lua
+│   ├── pyright.lua
+│   └── ts_ls.lua
+└── output.txt
+
+```
+
+`init.lua`:
+
+```lua
 -- Neovim 0.12 Config
 -- snacks.nvim for UI, native LSP with lsp/ directory pattern
 
@@ -156,7 +178,7 @@ vim.api.nvim_create_autocmd("LspAttach", {
 -- ============================================================
 -- LSP servers — enabled via lsp/ directory pattern
 -- ============================================================
-vim.lsp.enable({ "lua_ls", "ts_ls", "pyright", "clangd", "rust_analyzer" })
+vim.lsp.enable({ "lua_ls", "ts_ls", "pyright", "clangd" })
 
 -- ============================================================
 -- Bootstrap lazy.nvim
@@ -229,7 +251,6 @@ require("lazy").setup({
 				"typescript-language-server",
 				"pyright",
 				"clangd",
-				"rust-analyzer",
 				-- Formatters / linters
 				"stylua",
 				"ruff",
@@ -555,10 +576,7 @@ require("lazy").setup({
 		config = function()
 			require("vague").setup({
 				on_highlights = function(hl, colors)
-					hl.NormalFloat = { fg = colors.fg, bg = colors.bg }
 					hl.FloatBorder = { fg = colors.floatBorder }
-					hl.Pmenu = { fg = colors.fg, bg = colors.bg }
-					hl.PmenuSel = { fg = colors.fg, bg = colors.visual }
 					hl.MiniStatuslineFilename = { fg = colors.fg, bg = colors.line }
 					hl.MiniStatuslineDevinfo = { fg = colors.fg, bg = colors.line }
 					hl.MiniStatuslineInactive = { fg = colors.comment, bg = colors.line }
@@ -567,45 +585,126 @@ require("lazy").setup({
 			vim.cmd("colorscheme vague")
 		end,
 	},
-	{ "OXY2DEV/markview.nvim", lazy = false },
-	{
-		"folke/flash.nvim",
-		event = "VeryLazy",
-		opts = {
-			search = {
-				multi_window = false, -- single buffer only
-				wrap = true, -- search wraps around file
-			},
-			jump = {
-				autojump = false, -- always require label selection
-			},
-			label = {
-				uppercase = false, -- lowercase labels only, easier to type
-				current = false, -- don't label current position
-			},
-			modes = {
-				char = { enabled = false }, -- disable f/t enhancement, keep native
-			},
-		},
-		keys = {
-			{
-				"s",
-				mode = { "n", "x", "o" },
-				function()
-					require("flash").jump()
-				end,
-				desc = "Flash",
-			},
-			{
-				"S",
-				mode = { "n", "x", "o" },
-				function()
-					require("flash").jump({ search = { multi_window = true } })
-				end,
-				desc = "Flash multi-window",
-			},
-		},
-	},
 }, {
 	ui = { border = "rounded" },
 })
+
+```
+
+`lazy-lock.json`:
+
+```json
+{
+  "blink.cmp": { "branch": "main", "commit": "451168851e8e2466bc97ee3e026c3dcb9141ce07" },
+  "conform.nvim": { "branch": "master", "commit": "086a40dc7ed8242c03be9f47fbcee68699cc2395" },
+  "friendly-snippets": { "branch": "main", "commit": "6cd7280adead7f586db6fccbd15d2cac7e2188b9" },
+  "gitsigns.nvim": { "branch": "main", "commit": "caa98e2e5e4c23a1652c23be839d2e1722cecc29" },
+  "lazy.nvim": { "branch": "main", "commit": "306a05526ada86a7b30af95c5cc81ffba93fef97" },
+  "mason-tool-installer.nvim": { "branch": "main", "commit": "443f1ef8b5e6bf47045cb2217b6f748a223cf7dc" },
+  "mason.nvim": { "branch": "main", "commit": "44d1e90e1f66e077268191e3ee9d2ac97cc18e65" },
+  "mini.statusline": { "branch": "main", "commit": "14919901649d20d020e659c63c03baa75cd94f33" },
+  "nvim-autopairs": { "branch": "master", "commit": "59bce2eef357189c3305e25bc6dd2d138c1683f5" },
+  "nvim-lspconfig": { "branch": "master", "commit": "9d28ece4836e595de523e0bd9758dee1002430c6" },
+  "nvim-treesitter": { "branch": "main", "commit": "7caec274fd19c12b55902a5b795100d21531391f" },
+  "snacks.nvim": { "branch": "main", "commit": "ad9ede6a9cddf16cedbd31b8932d6dcdee9b716e" },
+  "vague.nvim": { "branch": "main", "commit": "8c4643f8a5106dbc492918f86ff6b5c81111ce9a" },
+  "which-key.nvim": { "branch": "main", "commit": "3aab2147e74890957785941f0c1ad87d0a44c15a" }
+}
+
+```
+
+`lsp/clangd.lua`:
+
+```lua
+return {
+    cmd = {
+        'clangd',
+        '--background-index',
+        '--clang-tidy',
+        '--header-insertion=iwyu',
+        '--completion-style=detailed',
+        '--function-arg-placeholders',
+        '--fallback-style=llvm',
+    },
+    init_options = {
+        usePlaceholders = true,
+        completeUnimported = true,
+        clangdFileStatus = true,
+    },
+}
+
+```
+
+`lsp/lua_ls.lua`:
+
+```lua
+return {
+    settings = {
+        Lua = {
+            runtime = { version = 'LuaJIT' },
+            diagnostics = { globals = { 'vim' } },
+            workspace = {
+                library = vim.api.nvim_get_runtime_file('', true),
+                checkThirdParty = false,
+            },
+            telemetry = { enable = false },
+        },
+    },
+}
+
+```
+
+`lsp/pyright.lua`:
+
+```lua
+return {
+    settings = {
+        python = {
+            analysis = {
+                typeCheckingMode = 'basic',
+                autoSearchPaths = true,
+                useLibraryCodeForTypes = true,
+                diagnosticMode = 'openFilesOnly',
+            },
+        },
+    },
+}
+
+```
+
+`lsp/ts_ls.lua`:
+
+```lua
+return {
+    settings = {
+        typescript = {
+            inlayHints = {
+                includeInlayParameterNameHints = 'all',
+                includeInlayFunctionParameterTypeHints = true,
+                includeInlayVariableTypeHints = true,
+                includeInlayPropertyDeclarationTypeHints = true,
+                includeInlayFunctionLikeReturnTypeHints = true,
+                includeInlayEnumMemberValueHints = true,
+            },
+        },
+        javascript = {
+            inlayHints = {
+                includeInlayParameterNameHints = 'all',
+                includeInlayFunctionParameterTypeHints = true,
+                includeInlayVariableTypeHints = true,
+                includeInlayPropertyDeclarationTypeHints = true,
+                includeInlayFunctionLikeReturnTypeHints = true,
+                includeInlayEnumMemberValueHints = true,
+            },
+        },
+    },
+}
+
+```
+
+`output.txt`:
+
+```txt
+[i] Using default configuration
+
+```
