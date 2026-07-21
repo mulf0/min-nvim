@@ -156,7 +156,7 @@ vim.api.nvim_create_autocmd("LspAttach", {
 -- ============================================================
 -- LSP servers — enabled via lsp/ directory pattern
 -- ============================================================
-vim.lsp.enable({ "lua_ls", "ts_ls", "pyright", "clangd", "rust_analyzer" })
+vim.lsp.enable({ "lua_ls", "ts_ls", "pyright", "clangd", "rust_analyzer", "gopls", "goimports" })
 
 -- ============================================================
 -- Bootstrap lazy.nvim
@@ -180,6 +180,25 @@ vim.opt.rtp:prepend(lazypath)
 -- ============================================================
 -- Plugins
 -- ============================================================
+local snacks_picker_layout = {
+	layout = {
+		layout = {
+			backdrop = false,
+			width = 0.6,
+			min_width = 80,
+			height = 0.9,
+			min_height = 30,
+			box = "vertical",
+			border = true,
+			title = "{title} {live} {flags}",
+			title_pos = "center",
+			{ win = "input", height = 1, border = "bottom" },
+			{ win = "list", height = 10, border = "none" },
+			{ win = "preview", title = "{preview}", border = "top" },
+		},
+	},
+}
+
 require("lazy").setup({
 
 	-- Treesitter
@@ -304,7 +323,10 @@ require("lazy").setup({
 			notifier = { enabled = true, timeout = 3000 },
 			picker = {
 				enabled = true,
-				sources = { explorer = { auto_close = true } },
+				sources = { explorer = {
+					auto_close = true,
+					layout = snacks_picker_layout.layout,
+				} },
 			},
 			quickfile = { enabled = true },
 			scope = { enabled = true },
@@ -314,28 +336,28 @@ require("lazy").setup({
 			{
 				"<leader>sf",
 				function()
-					Snacks.picker.files()
+					Snacks.picker.files(snacks_picker_layout)
 				end,
 				desc = "Search files",
 			},
 			{
 				"<leader>sg",
 				function()
-					Snacks.picker.grep()
+					Snacks.picker.grep(snacks_picker_layout)
 				end,
 				desc = "Search grep",
 			},
 			{
 				"<leader>sb",
 				function()
-					Snacks.picker.buffers()
+					Snacks.picker.buffers(snacks_picker_layout)
 				end,
 				desc = "Search buffers",
 			},
 			{
 				"<leader>sh",
 				function()
-					Snacks.picker.help()
+					Snacks.picker.help(snacks_picker_layout)
 				end,
 				desc = "Search help",
 			},
@@ -363,9 +385,9 @@ require("lazy").setup({
 			{
 				"<leader>q",
 				function()
-					Snacks.picker.diagnostics()
+					Snacks.picker.diagnostics(snacks_picker_layout)
 				end,
-				desc = "Diagnostics",
+				desc = "Search diagnostics",
 			},
 			{
 				"<leader>sk",
@@ -391,7 +413,7 @@ require("lazy").setup({
 			{
 				"<C-e>",
 				function()
-					Snacks.explorer()
+					Snacks.explorer(snacks_picker_layout)
 				end,
 				desc = "File explorer",
 			},
