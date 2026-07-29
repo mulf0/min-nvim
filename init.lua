@@ -7,7 +7,7 @@ vim.g.have_nerd_font = true
 
 -- Options
 vim.o.number = true
-vim.o.relativenumber = true
+vim.o.relativenumber = false
 vim.o.mouse = "a"
 vim.o.showmode = false
 vim.o.termguicolors = true
@@ -180,23 +180,56 @@ vim.opt.rtp:prepend(lazypath)
 -- ============================================================
 -- Plugins
 -- ============================================================
+-- Use a single responsive picker layout. Wide screens show results and previews
+-- side-by-side; narrower screens stack the preview below the results.
 local snacks_picker_layout = {
-	layout = {
-		layout = {
-			backdrop = false,
-			width = 0.6,
-			min_width = 80,
-			height = 0.9,
-			min_height = 30,
-			box = "vertical",
-			border = true,
-			title = "{title} {live} {flags}",
-			title_pos = "center",
-			{ win = "input", height = 1, border = "bottom" },
-			{ win = "list", height = 10, border = "none" },
-			{ win = "preview", title = "{preview}", border = "top" },
-		},
-	},
+	layout = function(source)
+		if vim.o.columns >= 120 and source ~= "diagnostics" then
+			return {
+				preview = true,
+				layout = {
+					backdrop = false,
+					width = 0.9,
+					min_width = 120,
+					height = 0.8,
+					min_height = 20,
+					box = "horizontal",
+					{
+						box = "vertical",
+						border = true,
+						title = "{title} {live} {flags}",
+						title_pos = "center",
+						{ win = "input", height = 1, border = "bottom" },
+						{ win = "list", border = "none" },
+					},
+					{ win = "preview", title = "{preview}", border = true, width = 0.5 },
+				},
+			}
+		end
+
+		return {
+			preview = true,
+			layout = {
+				backdrop = false,
+				width = 0.6,
+				min_width = 80,
+				height = 0.9,
+				min_height = 30,
+				box = "vertical",
+				border = true,
+				title = "{title} {live} {flags}",
+				title_pos = "center",
+				{ win = "input", height = 1, border = "bottom" },
+				{ win = "list", height = source == "diagnostics" and 0.25 or nil, border = "none" },
+				{
+					win = "preview",
+					title = "{preview}",
+					height = source ~= "diagnostics" and 0.4 or nil,
+					border = "top",
+				},
+			},
+		}
+	end,
 }
 
 require("lazy").setup({
@@ -323,6 +356,7 @@ require("lazy").setup({
 			notifier = { enabled = true, timeout = 3000 },
 			picker = {
 				enabled = true,
+				layout = snacks_picker_layout.layout,
 				sources = { explorer = {
 					auto_close = true,
 					layout = snacks_picker_layout.layout,
@@ -364,21 +398,21 @@ require("lazy").setup({
 			{
 				"<leader>sr",
 				function()
-					Snacks.picker.resume()
+					Snacks.picker.resume(snacks_picker_layout)
 				end,
 				desc = "Search resume",
 			},
 			{
 				"<leader>/",
 				function()
-					Snacks.picker.lines()
+					Snacks.picker.lines(snacks_picker_layout)
 				end,
 				desc = "Search in buffer",
 			},
 			{
 				"<leader><leader>",
 				function()
-					Snacks.picker.buffers()
+					Snacks.picker.buffers(snacks_picker_layout)
 				end,
 				desc = "Buffers",
 			},
@@ -392,21 +426,21 @@ require("lazy").setup({
 			{
 				"<leader>sk",
 				function()
-					Snacks.picker.keymaps()
+					Snacks.picker.keymaps(snacks_picker_layout)
 				end,
 				desc = "Search keymaps",
 			},
 			{
 				"<leader>sc",
 				function()
-					Snacks.picker.command_history()
+					Snacks.picker.command_history(snacks_picker_layout)
 				end,
 				desc = "Command history",
 			},
 			{
 				"<leader>sn",
 				function()
-					Snacks.picker.notifications()
+					Snacks.picker.notifications(snacks_picker_layout)
 				end,
 				desc = "Notification history",
 			},
@@ -427,14 +461,14 @@ require("lazy").setup({
 			{
 				"<leader>gs",
 				function()
-					Snacks.picker.git_status()
+					Snacks.picker.git_status(snacks_picker_layout)
 				end,
 				desc = "Git status",
 			},
 			{
 				"<leader>gl",
 				function()
-					Snacks.picker.git_log()
+					Snacks.picker.git_log(snacks_picker_layout)
 				end,
 				desc = "Git log",
 			},
@@ -589,7 +623,6 @@ require("lazy").setup({
 			vim.cmd("colorscheme vague")
 		end,
 	},
-	{ "OXY2DEV/markview.nvim", lazy = false },
 	{
 		"folke/flash.nvim",
 		event = "VeryLazy",
