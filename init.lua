@@ -38,12 +38,6 @@ vim.schedule(function()
 	vim.o.clipboard = "unnamedplus"
 end)
 
--- Auto-reload files changed outside neovim
-vim.api.nvim_create_autocmd({ "FocusGained", "BufEnter", "CursorHold", "CursorHoldI" }, {
-	group = vim.api.nvim_create_augroup("auto-reload", { clear = true }),
-	command = "silent! checktime",
-})
-
 -- Basic keymaps
 vim.keymap.set("n", "<Esc>", "<cmd>nohlsearch<CR>")
 vim.keymap.set("t", "<Esc><Esc>", "<C-\\><C-n>", { desc = "Exit terminal mode" })
@@ -65,18 +59,11 @@ vim.api.nvim_create_autocmd("TextYankPost", {
 
 -- Diagnostics config
 vim.diagnostic.config({
-	virtual_text = { current_line = true },
+	virtual_text = false,
 	severity_sort = true,
-	float = { border = "rounded", source = "if_many" },
-	underline = { severity = vim.diagnostic.severity.ERROR },
-	signs = {
-		text = {
-			[vim.diagnostic.severity.ERROR] = "E",
-			[vim.diagnostic.severity.WARN] = "W",
-			[vim.diagnostic.severity.INFO] = "I",
-			[vim.diagnostic.severity.HINT] = "H",
-		},
-	},
+	float = false,
+	underline = false,
+	signs = false,
 })
 
 -- ============================================================
@@ -156,7 +143,7 @@ vim.api.nvim_create_autocmd("LspAttach", {
 -- ============================================================
 -- LSP servers — enabled via lsp/ directory pattern
 -- ============================================================
-vim.lsp.enable({ "lua_ls", "ts_ls", "pyright", "clangd", "rust_analyzer", "gopls", "goimports" })
+vim.lsp.enable({ "lua_ls", "ts_ls", "ty", "astro", "clangd", "rust_analyzer", "gopls", "goimports" })
 
 -- ============================================================
 -- Bootstrap lazy.nvim
@@ -279,7 +266,8 @@ require("lazy").setup({
 				-- LSP servers (mason package names)
 				"lua-language-server",
 				"typescript-language-server",
-				"pyright",
+				"ty",
+				"astro-language-server",
 				"clangd",
 				"rust-analyzer",
 				-- Formatters / linters
@@ -302,14 +290,21 @@ require("lazy").setup({
 		---@module 'blink.cmp'
 		---@type blink.cmp.Config
 		opts = {
-			keymap = { preset = "enter" },
+			keymap = {
+				preset = "enter",
+				["<C-Space>"] = { "show", "show_documentation", "hide_documentation" },
+			},
 			appearance = { nerd_font_variant = "mono" },
 			completion = {
 				documentation = {
 					auto_show = true,
 					window = { border = "rounded" },
 				},
-				menu = { border = "rounded", scrollbar = false },
+				menu = { border = "rounded", scrollbar = false, auto_show = false },
+				trigger = {
+					show_on_keyword = false,
+					show_on_trigger_character = false,
+				},
 			},
 			signature = {
 				enabled = true,
@@ -486,15 +481,6 @@ require("lazy").setup({
 				topdelete = { text = "‾" },
 				changedelete = { text = "~" },
 			},
-			on_attach = function(buf)
-				local gs = require("gitsigns")
-				vim.keymap.set("n", "]c", gs.next_hunk, { buffer = buf, desc = "Next hunk" })
-				vim.keymap.set("n", "[c", gs.prev_hunk, { buffer = buf, desc = "Prev hunk" })
-				vim.keymap.set("n", "<leader>hs", gs.stage_hunk, { buffer = buf, desc = "Stage hunk" })
-				vim.keymap.set("n", "<leader>hr", gs.reset_hunk, { buffer = buf, desc = "Reset hunk" })
-				vim.keymap.set("n", "<leader>hp", gs.preview_hunk, { buffer = buf, desc = "Preview hunk" })
-				vim.keymap.set("n", "<leader>hb", gs.blame_line, { buffer = buf, desc = "Blame line" })
-			end,
 		},
 	},
 
@@ -605,22 +591,42 @@ require("lazy").setup({
 
 	-- Colorscheme
 	{
-		"vague-theme/vague.nvim",
+		"rebelot/kanagawa.nvim",
 		lazy = false,
 		priority = 1000,
 		config = function()
-			require("vague").setup({
-				on_highlights = function(hl, colors)
-					hl.NormalFloat = { fg = colors.fg, bg = colors.bg }
-					hl.FloatBorder = { fg = colors.floatBorder }
-					hl.Pmenu = { fg = colors.fg, bg = colors.bg }
-					hl.PmenuSel = { fg = colors.fg, bg = colors.visual }
-					hl.MiniStatuslineFilename = { fg = colors.fg, bg = colors.line }
-					hl.MiniStatuslineDevinfo = { fg = colors.fg, bg = colors.line }
-					hl.MiniStatuslineInactive = { fg = colors.comment, bg = colors.line }
+			require("kanagawa").setup({
+				theme = "dragon",
+				colors = {
+					palette = {
+						dragonRed = require("kanagawa.lib.color")("#c4746e"):saturate(-0.35):to_hex(),
+					},
+					theme = {
+						all = {
+							ui = {
+								bg_gutter = "none",
+							},
+						},
+					},
+				},
+				overrides = function(colors)
+					local theme = colors.theme
+					return {
+						NormalFloat = { bg = theme.ui.bg_m1 },
+						FloatBorder = { bg = theme.ui.bg_m1 },
+						FloatTitle = { bg = theme.ui.bg_m1 },
+						Pmenu = { fg = theme.ui.fg, bg = theme.ui.bg_m1 },
+						PmenuSel = { fg = theme.ui.fg, bg = theme.ui.bg_p1 },
+						PmenuSbar = { bg = theme.ui.bg_m1 },
+						PmenuThumb = { bg = theme.ui.bg_p1 },
+						MiniStatuslineFilename = { fg = theme.ui.fg_dim, bg = theme.ui.bg_p1 },
+						NormalDark = { fg = theme.ui.fg_dim, bg = theme.ui.bg_m3 },
+						LazyNormal = { bg = theme.ui.bg_m3, fg = theme.ui.fg_dim },
+						MasonNormal = { bg = theme.ui.bg_m3, fg = theme.ui.fg_dim },
+					}
 				end,
 			})
-			vim.cmd("colorscheme vague")
+			vim.cmd("colorscheme kanagawa-dragon")
 		end,
 	},
 	{
@@ -650,14 +656,6 @@ require("lazy").setup({
 					require("flash").jump()
 				end,
 				desc = "Flash",
-			},
-			{
-				"S",
-				mode = { "n", "x", "o" },
-				function()
-					require("flash").jump({ search = { multi_window = true } })
-				end,
-				desc = "Flash multi-window",
 			},
 		},
 	},
