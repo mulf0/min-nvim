@@ -591,42 +591,22 @@ require("lazy").setup({
 
 	-- Colorscheme
 	{
-		"rebelot/kanagawa.nvim",
+		"vague-theme/vague.nvim",
 		lazy = false,
 		priority = 1000,
 		config = function()
-			require("kanagawa").setup({
-				theme = "dragon",
-				colors = {
-					palette = {
-						dragonRed = require("kanagawa.lib.color")("#c4746e"):saturate(-0.35):to_hex(),
-					},
-					theme = {
-						all = {
-							ui = {
-								bg_gutter = "none",
-							},
-						},
-					},
-				},
-				overrides = function(colors)
-					local theme = colors.theme
-					return {
-						NormalFloat = { bg = theme.ui.bg_m1 },
-						FloatBorder = { bg = theme.ui.bg_m1 },
-						FloatTitle = { bg = theme.ui.bg_m1 },
-						Pmenu = { fg = theme.ui.fg, bg = theme.ui.bg_m1 },
-						PmenuSel = { fg = theme.ui.fg, bg = theme.ui.bg_p1 },
-						PmenuSbar = { bg = theme.ui.bg_m1 },
-						PmenuThumb = { bg = theme.ui.bg_p1 },
-						MiniStatuslineFilename = { fg = theme.ui.fg_dim, bg = theme.ui.bg_p1 },
-						NormalDark = { fg = theme.ui.fg_dim, bg = theme.ui.bg_m3 },
-						LazyNormal = { bg = theme.ui.bg_m3, fg = theme.ui.fg_dim },
-						MasonNormal = { bg = theme.ui.bg_m3, fg = theme.ui.fg_dim },
-					}
+			require("vague").setup({
+				on_highlights = function(hl, colors)
+					hl.NormalFloat = { fg = colors.fg, bg = colors.bg }
+					hl.FloatBorder = { fg = colors.floatBorder }
+					hl.Pmenu = { fg = colors.fg, bg = colors.bg }
+					hl.PmenuSel = { fg = colors.fg, bg = colors.visual }
+					hl.MiniStatuslineFilename = { fg = colors.fg, bg = colors.line }
+					hl.MiniStatuslineDevinfo = { fg = colors.fg, bg = colors.line }
+					hl.MiniStatuslineInactive = { fg = colors.comment, bg = colors.line }
 				end,
 			})
-			vim.cmd("colorscheme kanagawa-dragon")
+			vim.cmd("colorscheme vague")
 		end,
 	},
 	{
