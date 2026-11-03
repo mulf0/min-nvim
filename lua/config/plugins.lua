@@ -27,6 +27,7 @@ require("lazy").setup({
 	require("plugins.blink"),
 	require("plugins.which-key"),
 	require("plugins.snacks"),
+	require("plugins.neotree"),
 	require("plugins.neogit"),
 	require("plugins.gitsigns"),
 	require("plugins.statusline"),
@@ -34,6 +35,7 @@ require("lazy").setup({
 	require("plugins.conform"),
 	require("plugins.colorscheme"),
 	require("plugins.flash"),
+	require("plugins.cdbg"),
 }, {
 	ui = { border = "rounded" },
 })

@@ -13,11 +13,13 @@ return {
 				"astro-language-server",
 				"clangd",
 				"rust-analyzer",
+				"harper-ls",
 				-- Formatters / linters
 				"stylua",
 				"ruff",
 				"prettier",
 				"biome",
+				"oxfmt",
 			},
 		},
 	},

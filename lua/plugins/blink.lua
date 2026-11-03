@@ -6,6 +6,7 @@ return {
 	---@module 'blink.cmp'
 	---@type blink.cmp.Config
 	opts = {
+		enabled = function() return vim.bo.filetype ~= "markdown" end,
 		keymap = {
 			preset = "enter",
 			["<C-Space>"] = { "show", "show_documentation", "hide_documentation" },
@@ -16,11 +17,7 @@ return {
 				auto_show = true,
 				window = { border = "rounded" },
 			},
-			menu = { border = "rounded", scrollbar = false, auto_show = false },
-			trigger = {
-				show_on_keyword = false,
-				show_on_trigger_character = false,
-			},
+			menu = { border = "rounded", scrollbar = false },
 		},
 		signature = {
 			enabled = true,
@@ -31,5 +28,4 @@ return {
 		},
 		fuzzy = { implementation = "prefer_rust_with_warning" },
 	},
-	opts_extend = { "sources.default" },
 }

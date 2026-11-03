@@ -1,5 +1,6 @@
 -- Basic keymaps
 vim.keymap.set("n", "<Esc>", "<cmd>nohlsearch<CR>")
+vim.keymap.set("n", "vv", "v$", { desc = "Select to end of line" })
 vim.keymap.set("t", "<Esc><Esc>", "<C-\\><C-n>", { desc = "Exit terminal mode" })
 vim.keymap.set("n", "<C-h>", "<C-w><C-h>", { desc = "Focus left" })
 vim.keymap.set("n", "<C-l>", "<C-w><C-l>", { desc = "Focus right" })

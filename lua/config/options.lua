@@ -27,9 +27,9 @@ vim.o.swapfile = false
 vim.o.autoread = true
 vim.o.cmdheight = 0
 
-vim.schedule(function()
-	vim.o.clipboard = "unnamedplus"
-end)
+-- Use Neovim's built-in OSC 52 clipboard (no wl-copy/xsel dependency).
+vim.g.clipboard = "osc52"
+vim.o.clipboard = "unnamedplus"
 
 -- Hide the tab bar entirely.
 vim.o.tabline = ""

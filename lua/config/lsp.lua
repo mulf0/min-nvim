@@ -84,4 +84,13 @@ vim.api.nvim_create_autocmd("LspAttach", {
 -- ============================================================
 -- LSP servers — enabled via lsp/ directory pattern
 -- ============================================================
-vim.lsp.enable({ "lua_ls", "ts_ls", "ty", "astro", "clangd", "rust_analyzer", "gopls", "goimports", "solidity_ls_nomicfoundation" })
+vim.lsp.config("harper_ls", {
+	cmd = { "harper-ls", "--stdio" },
+	filetypes = { "markdown" },
+	settings = {
+		["harper-ls"] = {
+			linters = { SplitWords = false },
+		},
+	},
+})
+vim.lsp.enable({ "lua_ls", "ts_ls", "ty", "astro", "clangd", "rust_analyzer", "gopls", "goimports", "solidity_ls_nomicfoundation", "harper_ls" })
